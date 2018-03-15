@@ -1245,6 +1245,12 @@ namespace Be.Windows.Forms
 		/// </summary>
 		long _findingPos;
 
+
+        /// <summary>
+        /// Contains (startIndex, endIndex, bgColour, textColour) to highlight bytes with colour.
+        /// </summary>
+        Dictionary<long, Tuple<long, Color, Color>> _highlightPositions;
+
 		/// <summary>
 		/// Contains a state value about Insert or Write mode. When this value is true and the ByteProvider SupportsInsert is true bytes are inserted instead of overridden.
 		/// </summary>
@@ -1395,6 +1401,7 @@ namespace Be.Windows.Forms
 
 			_thumbTrackTimer.Interval = 50;
 			_thumbTrackTimer.Tick += new EventHandler(PerformScrollThumbTrack);
+            _highlightPositions = new Dictionary<long, Tuple<long, Color, Color>>();
 		}
 
 		#endregion
@@ -2337,6 +2344,40 @@ namespace Be.Windows.Forms
 			}
 		}
 
+        /// <summary>
+        /// Highlights background of bytes between start and end index with colour.
+        /// </summary>
+        /// <param name="startPos">Start byte index.</param>
+        /// <param name="endPos">End byte index.</param>
+        /// <param name="textColor">Colour for text.</param>
+        /// <param name="bgColor">Colour to paint background.</param>
+        /// <param name="clear">Clear highlighting for this position.</param>
+        public void HighlightBytes(long startPos, long endPos, Color textColor, Color bgColor, bool clear = false)
+        {
+            var temp = new Dictionary<long, Tuple<long, Color, Color>>(_highlightPositions);
+            
+            Tuple<long, Color, Color> entry = null;
+
+            if (_highlightPositions.TryGetValue(startPos, out entry))
+            {
+                _highlightPositions.Remove(startPos);
+            }
+            
+            if(!clear)
+                _highlightPositions.Add(startPos, new Tuple<long, Color, Color>(endPos, textColor, bgColor));
+        }
+
+        /// <summary>
+        /// Clears all highilighting.
+        /// </summary>
+        /// <param name="refresh">Force redraw.</param>
+        public void ClearHighlights(bool refresh = false)
+        {
+            _highlightPositions.Clear();
+
+            if (refresh)
+                Refresh();
+        }
 
 		/// <summary>
 		/// Paints the hex box.
@@ -2447,30 +2488,58 @@ namespace Be.Windows.Forms
 
 			bool isKeyInterpreterActive = _keyInterpreter == null || _keyInterpreter.GetType() == typeof(KeyInterpreter);
 
-			for (long i = startByte; i < intern_endByte + 1; i++)
+            long highlightStart = -1, highlightEnd = -1;
+            Tuple<long, Color, Color> entry = null;
+
+            for (long i = startByte; i < intern_endByte + 1; i++)
 			{
 				counter++;
 				Point gridPoint = GetGridBytePoint(counter);
 				byte b = _byteProvider.ReadByte(i);
 
 				bool isSelectedByte = i >= _bytePos && i <= (_bytePos + _selectionLength - 1) && _selectionLength != 0;
+                bool isHighlighted = (i + 1 >= highlightStart && i + 1 <= highlightEnd) && highlightEnd != -1;
 
-				if (isSelectedByte && isKeyInterpreterActive)
+                if (isSelectedByte && isKeyInterpreterActive)
 				{
 					PaintHexStringSelected(g, b, selBrush, selBrushBack, gridPoint);
 				}
 				else
 				{
-					PaintHexString(g, b, brush, gridPoint);
-				}
+                    // todo: confirm this works
+                    if (isHighlighted = (isHighlighted || _highlightPositions.TryGetValue(i, out entry)))
+                    {
+                        var newForegroundBrush = new SolidBrush(entry.Item2);
+                        var bgBrush = new SolidBrush(entry.Item3);
+
+                        PaintHexString(g, b, newForegroundBrush, gridPoint, bgBrush);
+                        highlightStart = i;
+                        highlightEnd = entry.Item1;
+                    }
+                    else
+                    {
+                        PaintHexString(g, b, brush, gridPoint);
+                    }
+                }
 			}
 		}
 
-		void PaintHexString(Graphics g, byte b, Brush brush, Point gridPoint)
+		void PaintHexString(Graphics g, byte b, Brush brush, Point gridPoint, Brush brushBack = null)
 		{
 			PointF bytePointF = GetBytePointF(gridPoint);
 
 			string sB = ConvertByteToHex(b);
+
+            // todo: confirm this works
+            if (brushBack != null)
+            {
+                PointF newBytePointF = GetBytePointF(gridPoint);
+
+                bool isLastLineChar = (gridPoint.X + 1 == _iHexMaxHBytes);
+                float bcWidth = (isLastLineChar) ? _charSize.Width * 2 : _charSize.Width * 3;
+
+                g.FillRectangle(brushBack, newBytePointF.X, newBytePointF.Y, bcWidth, _charSize.Height);
+            }
 
 			g.DrawString(sB.Substring(0, 1), Font, brush, bytePointF, _stringFormat);
 			bytePointF.X += _charSize.Width;
@@ -2516,24 +2585,41 @@ namespace Be.Windows.Forms
 
 			bool isKeyInterpreterActive = _keyInterpreter == null || _keyInterpreter.GetType() == typeof(KeyInterpreter);
 			bool isStringKeyInterpreterActive = _keyInterpreter != null && _keyInterpreter.GetType() == typeof(StringKeyInterpreter);
+            long highlightStart = -1, highlightEnd = -1;
+            Tuple<long, Color, Color> highlightEntry = null;
 
-			for (long i = startByte; i < intern_endByte + 1; i++)
+            for (long i = startByte; i < intern_endByte + 1; i++)
 			{
 				counter++;
 				Point gridPoint = GetGridBytePoint(counter);
 				PointF byteStringPointF = GetByteStringPointF(gridPoint);
 				byte b = _byteProvider.ReadByte(i);
-
+                
 				bool isSelectedByte = i >= _bytePos && i <= (_bytePos + _selectionLength - 1) && _selectionLength != 0;
+                bool isHighlighted = (i + 1 >= highlightStart && i + 1 <= highlightEnd) && highlightEnd != -1;
 
-				if (isSelectedByte && isKeyInterpreterActive)
+                if (isSelectedByte && isKeyInterpreterActive)
 				{
 					PaintHexStringSelected(g, b, selBrush, selBrushBack, gridPoint);
 				}
 				else
 				{
-					PaintHexString(g, b, brush, gridPoint);
-				}
+                    // todo: confirm this works
+                    if (isHighlighted = (isHighlighted || _highlightPositions.TryGetValue(i, out highlightEntry)))
+                    {
+                        var newForegroundBrush = new SolidBrush(highlightEntry.Item2);
+                        var bgBrush = new SolidBrush(highlightEntry.Item3);
+
+                        PaintHexString(g, b, newForegroundBrush, gridPoint, bgBrush);
+
+                        highlightStart = i;
+                        highlightEnd = highlightEntry.Item1;
+                    }
+                    else
+                    {
+                        PaintHexString(g, b, brush, gridPoint);
+                    }
+                }
 
 				string s = new String(ByteCharConverter.ToChar(b), 1);
 
@@ -2544,7 +2630,15 @@ namespace Be.Windows.Forms
 				}
 				else
 				{
-					g.DrawString(s, Font, brush, byteStringPointF, _stringFormat);
+                    if (!isHighlighted)
+                    {
+                        g.DrawString(s, Font, brush, byteStringPointF, _stringFormat);
+                    }
+                    else
+                    {
+                        g.FillRectangle(new SolidBrush(highlightEntry.Item3), byteStringPointF.X, byteStringPointF.Y, _charSize.Width, _charSize.Height);
+                        g.DrawString(s, Font, new SolidBrush(highlightEntry.Item2), byteStringPointF, _stringFormat);
+                    }
 				}
 			}
 		}

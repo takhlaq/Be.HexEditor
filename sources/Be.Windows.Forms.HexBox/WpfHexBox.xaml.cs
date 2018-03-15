@@ -30,12 +30,39 @@ namespace Be.Windows.Forms
         public IByteProvider ByteProvider
         {
             get { return (IByteProvider)GetValue(ByteProviderProperty); }
-            set { SetValue(ByteProviderProperty, value); }
+            set { SetValue(ByteProviderProperty, value); ClearHighlights(); }
         }
 
+        /// <summary>
+        /// Select bytes from [start] byte, for [length] bytes.
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
         public void Select(long start, long length)
         {
             ((Be.Windows.Forms.HexBox)HexBox).Select(start, length);
+        }
+
+        /// <summary>
+        /// Highlights background of bytes between [startPos] for [length] bytes with [color].
+        /// </summary>
+        /// <param name="startPos">Start byte index.</param>
+        /// <param name="length">How many bytes to highlight.</param>
+        /// <param name="textColor">Colour for text.</param>
+        /// <param name="bgColor">Colour to paint background.</param>
+        /// <param name="clear">Clear highlighting for this position.</param>
+        public void HighlightBytes(long startPos, long length, System.Drawing.Color textColor, System.Drawing.Color bgColor, bool clear = false)
+        {
+            ((Be.Windows.Forms.HexBox)HexBox).HighlightBytes(startPos, startPos + length, textColor, bgColor, clear);
+        }
+
+        /// <summary>
+        /// Clears all highlights besides selection.
+        /// </summary>
+        /// <param name="refresh">Force redraw.</param>
+        public void ClearHighlights(bool refresh = false)
+        {
+            ((Be.Windows.Forms.HexBox)HexBox).ClearHighlights();
         }
 
         /// <summary>

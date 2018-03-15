@@ -950,6 +950,11 @@
             Contains a value of the current finding position.
             </summary>
         </member>
+        <member name="F:Be.Windows.Forms.HexBox._highlightPositions">
+            <summary>
+            Contains (startIndex, endIndex, bgColour, textColour) to highlight bytes with colour.
+            </summary>
+        </member>
         <member name="F:Be.Windows.Forms.HexBox._insertActive">
             <summary>
             Contains a state value about Insert or Write mode. When this value is true and the ByteProvider SupportsInsert is true bytes are inserted instead of overridden.
@@ -1184,6 +1189,22 @@
             Paints the background.
             </summary>
             <param name="e">A PaintEventArgs that contains the event data.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.HighlightBytes(System.Int64,System.Int64,System.Drawing.Color,System.Drawing.Color,System.Boolean)">
+            <summary>
+            Highlights background of bytes between start and end index with colour.
+            </summary>
+            <param name="startPos">Start byte index.</param>
+            <param name="endPos">End byte index.</param>
+            <param name="textColor">Colour for text.</param>
+            <param name="bgColor">Colour to paint background.</param>
+            <param name="clear">Clear highlighting for this position.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.HexBox.ClearHighlights(System.Boolean)">
+            <summary>
+            Clears all highilighting.
+            </summary>
+            <param name="refresh">Force redraw.</param>
         </member>
         <member name="M:Be.Windows.Forms.HexBox.OnPaint(System.Windows.Forms.PaintEventArgs)">
             <summary>
@@ -1779,6 +1800,29 @@
             Byte Provider Interface
             </summary>
         </member>
+        <member name="M:Be.Windows.Forms.WpfHexBox.Select(System.Int64,System.Int64)">
+            <summary>
+            Select bytes from [start] byte, for [length] bytes.
+            </summary>
+            <param name="start"></param>
+            <param name="length"></param>
+        </member>
+        <member name="M:Be.Windows.Forms.WpfHexBox.HighlightBytes(System.Int64,System.Int64,System.Drawing.Color,System.Drawing.Color,System.Boolean)">
+            <summary>
+            Highlights background of bytes between [startPos] for [length] bytes with [color].
+            </summary>
+            <param name="startPos">Start byte index.</param>
+            <param name="length">How many bytes to highlight.</param>
+            <param name="textColor">Colour for text.</param>
+            <param name="bgColor">Colour to paint background.</param>
+            <param name="clear">Clear highlighting for this position.</param>
+        </member>
+        <member name="M:Be.Windows.Forms.WpfHexBox.ClearHighlights(System.Boolean)">
+            <summary>
+            Clears all highlights besides selection.
+            </summary>
+            <param name="refresh">Force redraw.</param>
+        </member>
         <member name="F:Be.Windows.Forms.WpfHexBox.ByteProviderProperty">
             <summary>
             Byte Provider
@@ -1787,6 +1831,36 @@
         <member name="M:Be.Windows.Forms.WpfHexBox.InitializeComponent">
             <summary>
             InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
             </summary>
         </member>
     </members>
