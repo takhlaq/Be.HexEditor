@@ -1792,12 +1792,22 @@
         </member>
         <member name="M:Be.Windows.Forms.WpfHexBox.#ctor">
             <summary>
-            Initialise HexBox
+            Initialise HexBox.
             </summary>
         </member>
         <member name="P:Be.Windows.Forms.WpfHexBox.ByteProvider">
             <summary>
-            Byte Provider Interface
+            Byte Provider Interface.
+            </summary>
+        </member>
+        <member name="P:Be.Windows.Forms.WpfHexBox.SelectionStart">
+            <summary>
+            Start offset of selection
+            </summary>
+        </member>
+        <member name="E:Be.Windows.Forms.WpfHexBox.OnSelectionStartChanged">
+            <summary>
+            Event handler on selection change.
             </summary>
         </member>
         <member name="M:Be.Windows.Forms.WpfHexBox.Select(System.Int64,System.Int64)">
@@ -1825,12 +1835,42 @@
         </member>
         <member name="F:Be.Windows.Forms.WpfHexBox.ByteProviderProperty">
             <summary>
-            Byte Provider
+            Byte Provider.
             </summary>
         </member>
         <member name="M:Be.Windows.Forms.WpfHexBox.InitializeComponent">
             <summary>
             InitializeComponent
+            </summary>
+        </member>
+        <member name="T:XamlGeneratedNamespace.GeneratedInternalTypeHelper">
+            <summary>
+            GeneratedInternalTypeHelper
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateInstance(System.Type,System.Globalization.CultureInfo)">
+            <summary>
+            CreateInstance
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.GetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            GetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.SetPropertyValue(System.Reflection.PropertyInfo,System.Object,System.Object,System.Globalization.CultureInfo)">
+            <summary>
+            SetPropertyValue
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.CreateDelegate(System.Type,System.Object,System.String)">
+            <summary>
+            CreateDelegate
+            </summary>
+        </member>
+        <member name="M:XamlGeneratedNamespace.GeneratedInternalTypeHelper.AddEventHandler(System.Reflection.EventInfo,System.Object,System.Delegate)">
+            <summary>
+            AddEventHandler
             </summary>
         </member>
     </members>

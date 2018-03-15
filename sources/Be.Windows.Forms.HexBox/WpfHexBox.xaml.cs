@@ -17,21 +17,40 @@ namespace Be.Windows.Forms
     public partial class WpfHexBox : UserControl
     {
         /// <summary>
-        /// Initialise HexBox
+        /// Initialise HexBox.
         /// </summary>
         public WpfHexBox()
         {
             InitializeComponent();
+            ((Be.Windows.Forms.HexBox)HexBox).SelectionStartChanged += WpfHexBox_SelectionStartChanged;
+        }
+
+        private void WpfHexBox_SelectionStartChanged(object sender, EventArgs e)
+        {
+            OnSelectionStartChanged?.Invoke(sender, e);
         }
 
         /// <summary>
-        /// Byte Provider Interface
+        /// Byte Provider Interface.
         /// </summary>
         public IByteProvider ByteProvider
         {
             get { return (IByteProvider)GetValue(ByteProviderProperty); }
             set { SetValue(ByteProviderProperty, value); ClearHighlights(); }
         }
+
+        /// <summary>
+        /// Start offset of selection
+        /// </summary>
+        public long SelectionStart
+        {
+            get { return ((Be.Windows.Forms.HexBox)HexBox).SelectionStart;  }
+        }
+
+        /// <summary>
+        /// Event handler on selection change.
+        /// </summary>
+        public event EventHandler OnSelectionStartChanged;
 
         /// <summary>
         /// Select bytes from [start] byte, for [length] bytes.
@@ -66,7 +85,7 @@ namespace Be.Windows.Forms
         }
 
         /// <summary>
-        /// Byte Provider
+        /// Byte Provider.
         /// </summary>
         public static readonly DependencyProperty ByteProviderProperty =
             DependencyProperty.Register("ByteProvider", typeof(IByteProvider),
